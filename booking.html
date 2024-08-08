@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+        rel="stylesheet">
+    <title>Booking for a puja</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 10px;
+        }
+
+        form>div {
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        form>div>h2 {
+            font-family: "Josefin Sans", sans-serif;
+            font-size: 25px;
+        }
+
+        form>div>p {
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        form>div>input {
+            padding: 5px 10px;
+            outline: none;
+            border: 1px solid rgb(206, 24, 0);
+            border-radius: 3px;
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        form>div>select {
+            padding: 5px 10px;
+            outline: none;
+            border: 1px solid rgb(206, 24, 0);
+            border-radius: 3px;
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        #address {
+            margin-top: 2px;
+            line-height: 30px;
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        form>div>button {
+            padding: 5px 10px;
+            background-color: rgb(206, 24, 0);
+            color: white;
+            border: 1px solid rgb(206, 24, 0);
+            border-radius: 3px;
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        form>div>button:hover {
+            background-color: transparent;
+            color: rgb(206, 24, 0);
+        }
+
+        form>div>p>a {
+            color: rgb(0, 77, 220);
+        }
+    </style>
+</head>
+
+<body>
+    <form id="form">
+        <div>
+            <h2>Book Now For A Puja</h2>
+        </div>
+        <div>
+            <p>Full Name:</p>
+            <input type="text" id="name">
+        </div>
+        <div>
+            <p>Contact Number:</p>
+            <input type="tel" id="pnum">
+        </div>
+        <div>
+            <p>Select a Puja:</p>
+            <select id="puja">
+                <option>--- choose a puja --</option>
+                <option>Durga Puja</option>
+                <option>Ganesh Puja</option>
+                <option>Gruha Pratishtha</option>
+                <option>Marriage(Vivha)</option>
+                <option>Murti Prana Pratishtha</option>
+                <option>Namakaran</option>
+                <option>Navagraha Santi</option>
+                <option>Navaratri Puja</option>
+                <option>Office Puja</option>
+                <option>Rudra Abhishek</option>
+                <option>SatyaNarayan Katha</option>
+                <option>Vastu Santi</option>
+                <option>Vishwakarma Puja</option>
+                <option>Yagnapavita(Brata Upanayan)</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div>
+            <p>Select a Date:</p>
+            <input type="date" id="data">
+        </div>
+        <div>
+            <p>Complete Address:</p>
+            <label>District</label>
+            <select id="dist">
+                <option>Balasore</option>
+            </select>
+            <input type="text" placeholder="Address Line *" id="address">
+        </div>
+        <div>
+            <p>You have to pay: &#8377;<span id="price">0.00</span></p>
+        </div>
+        <div>
+            <button type="submit" id="bookBtn">Book</button>
+        </div>
+        <div>
+            <p>After booking completed to pay fee in online go to <a href="">All Booking</a></p>
+        </div>
+    </form>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, set, ref, push, get } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAavH4jvdeNB30zHKjNB5svpEewOdPtThY",
+            authDomain: "your-pandit.firebaseapp.com",
+            databaseURL: "https://your-pandit-default-rtdb.firebaseio.com",
+            projectId: "your-pandit",
+            storageBucket: "your-pandit.appspot.com",
+            messagingSenderId: "457299881099",
+            appId: "1:457299881099:web:46aff01b77794d1bb7788e",
+            measurementId: "G-3SH24JEZZB"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        const uid = localStorage.getItem('uId');
+        if (uid != "") {
+            console.log(uid);
+            const bookingRef = ref(db, `users/${uid}/booking`);
+        }
+
+        const pujaFee = {
+            'Durga Puja': 1500,
+            'Ganesh Puja': 500,
+            'Gruha Pratishtha': 1500,
+            'Marriage(Vivha)': 2500,
+            'Murti Prana Pratishtha': 2500,
+            'Namakaran': 500,
+            'Navagraha Santi': 500,
+            'Navaratri Puja': 1000,
+            'Office Puja': 800,
+            'Rudra Abhishek': 500,
+            'SatyaNarayan Katha': 500,
+            'Vastu Santi': 800,
+            'Vishwakarma Puja': 500,
+            'Yagnapavita(Brata Upanayan)': 2000
+        };
+
+        var event, totalFee, Date, Place;
+
+        const pujaSelectBox = document.getElementById('puja');
+        pujaSelectBox.addEventListener("change", () => {
+            var selectedPuja = pujaSelectBox.value;
+            document.getElementById('price').textContent = pujaFee[selectedPuja];
+        });
+
+        function getFormData() {
+            let name = document.getElementById('name').value;
+            let phoneNumber = document.getElementById('pnum').value;
+            let puja = document.getElementById('puja').value;
+            let date = document.getElementById('data').value;
+            let dist = document.getElementById('dist').value;
+            let address = document.getElementById('address').value;
+            let fee = document.getElementById('price').textContent;
+
+            if (name != "" && phoneNumber != "" && puja != "" && date != "" && dist != "" && address != "") {
+
+                event = puja;
+                totalFee = fee;
+                Date = date;
+                Place = name + ", " + phoneNumber + ", " + address + ", " + dist;
+                console.log(event);
+                console.log(totalFee);
+                console.log(Date);
+                console.log(Place);
+            } else {
+                alert('Please Fill all required information.');
+                return;
+            }
+
+        }
+
+        document.getElementById('bookBtn').addEventListener("click", (e) => {
+            e.preventDefault();
+            if (uid != "") {
+                getFormData();
+
+                const bookingData = {
+                    event: event,
+                    fee: totalFee,
+                    date: Date,
+                    add: Place,
+                    status: 'Booked',
+                };
+
+                const bookingId = push(bookingRef).key;
+
+                set(ref(db, `users/${uid}/booking/${bookingId}`), bookingData)
+                    .then(() => {
+                        alert('Booking is completed.');
+                        document.querySelector('#form').reset();
+                    })
+                    .catch((error) => {
+
+                    });
+
+            }else{
+                alert('please login.');
+            }
+
+        });
+    </script>
+</body>
+
+</html>

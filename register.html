@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+        rel="stylesheet">
+    <title>Resgister - Your Pandit</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        form {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        form>div {
+            margin: 10px;
+        }
+
+        form>div>h2 {
+            font-family: "Josefin Sans", sans-serif;
+            font-size: 25px;
+        }
+
+        form>div>p {
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        form>div>input {
+            width: 60vw;
+            max-width: 400px;
+            padding: 4px 5px;
+            margin: 10px 0px;
+            outline: none;
+            border: 1px solid black;
+            border-radius: 3px;
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        form>div>button {
+            padding: 5px 10px;
+            background-color: rgb(206, 24, 0);
+            color: white;
+            border: 1px solid rgb(206, 24, 0);
+            border-radius: 3px;
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        form>div>button:hover {
+            background-color: transparent;
+            color: rgb(206, 24, 0);
+        }
+
+        #code {
+            width: 70px;
+            padding: 2px;
+            text-align: center;
+            background-color: antiquewhite;
+            font-style: italic;
+        }
+        form>div>p{
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 14px;
+        }
+        form>div>p>a{
+            color: rgb(0, 77, 220);
+        }
+    </style>
+</head>
+
+<body>
+    <form>
+        <div>
+            <h2>User Resister</h2>
+        </div>
+        <div>
+            <p>Email *</p>
+            <input type="email" required id="email">
+        </div>
+        <div>
+            <p>Password *</p>
+            <input type="password" required id="password">
+        </div>
+        <div>
+            <p id="code">Code: </p>
+            <input type="password" required placeholder="Enter The Code.." id="entercode">
+        </div>
+        <div>
+            <button id="submitBtn">Register</button>
+        </div>
+        <div>
+            <p>I already have an account/ <a href="login.html">login with exist account</a></p>
+        </div>
+    </form>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, set, ref } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAavH4jvdeNB30zHKjNB5svpEewOdPtThY",
+            authDomain: "your-pandit.firebaseapp.com",
+            projectId: "your-pandit",
+            storageBucket: "your-pandit.appspot.com",
+            messagingSenderId: "457299881099",
+            appId: "1:457299881099:web:46aff01b77794d1bb7788e",
+            measurementId: "G-3SH24JEZZB"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const dataBase = getDatabase(app);
+        const auth = getAuth();
+
+        function generateCode() {
+            var num = Math.round(Math.random() * 10);
+            let str = `${num}${num * 2}${num + 3}`;
+            document.getElementById('code').textContent = str;
+        }
+        generateCode();
+
+        document.getElementById('submitBtn').addEventListener("click", (e) => {
+
+            e.preventDefault();
+
+            var code = document.getElementById('entercode').value;
+            var orgCode= document.getElementById('code').textContent;
+            if (code !== orgCode) {
+                alert("Give correct code.");
+                return;
+            }
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            console.log(email+" "+password)
+            register(email, password);
+                
+        });
+
+        function register(email, password){
+            createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        
+                        set(ref(dataBase, 'users/'+user.uid),{
+                            email:email,
+                            password:password
+                        });
+                        alert("Registration successful");
+                        localStorage.setItem('uId', user.uid);
+                        window.location.href="index.html";
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        alert(errorMessage);
+                    });    
+        }
+
+
+    </script>
+
+</body>
+
+</html>

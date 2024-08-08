@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+        rel="stylesheet">
+    <title>Your Booking</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        header {
+            position: sticky;
+            top: 0px;
+            left: 0px;
+            background-color: white;
+        }
+
+        header>h2 {
+            font-family: "Josefin Sans", sans-serif;
+            font-size: 25px;
+            font-style: italic;
+            font-weight: 300;
+            margin: 10px 20px;
+        }
+
+        header>h3 {
+            font-family: "Josefin Sans", sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+            margin: 10px 20px;
+        }
+
+        #bookings {
+            overflow: scroll;
+            scrollbar-width: none;
+        }
+
+        #card {
+            background-color: rgb(228, 237, 241);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 10px;
+            border-radius: 6px;
+            padding: 10px 0px;
+        }
+
+        .updiv {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            margin: 5px;
+            padding: 0px 10px;
+        }
+
+        .downdiv {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .updiv>p {
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 18px;
+        }
+
+        #pname {
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 17px;
+        }
+
+        #date {
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 17px;
+        }
+
+        #add {
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 15px;
+        }
+
+        #fee {
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .downdiv>a>button {
+            padding: 5px 10px;
+            background-color: rgb(206, 24, 0);
+            border: 1px solid rgb(206, 24, 0);
+            color: white;
+            border-radius: 3px;
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.5s;
+        }
+
+        .downdiv>a>button:hover {
+            background-color: transparent;
+            color: black;
+        }
+
+        #status {
+            border: 1px solid rgb(220, 165, 0);
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 15px;
+            color: rgb(220, 165, 0);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2 id="userName">Hello, unknown!</h2>
+        <h3>Your all bookings</h3>
+        <hr>
+    </header>
+
+    <section id="bookings">
+
+    </section>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, set, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAavH4jvdeNB30zHKjNB5svpEewOdPtThY",
+            authDomain: "your-pandit.firebaseapp.com",
+            databaseURL: "https://your-pandit-default-rtdb.firebaseio.com",
+            projectId: "your-pandit",
+            storageBucket: "your-pandit.appspot.com",
+            messagingSenderId: "457299881099",
+            appId: "1:457299881099:web:46aff01b77794d1bb7788e",
+            measurementId: "G-3SH24JEZZB"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const uid = localStorage.getItem('uId');
+
+        const unRef = ref(db, `users/${uid}/email`);
+
+        onValue(unRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data != null) {
+                document.getElementById('userName').textContent = `Hello, ${data}!`;
+            } else {
+                alert('Go to Login.');
+            }
+        });
+
+        const bookRef = ref(db, `users/${uid}/booking`);
+
+        get(bookRef)
+            .then((snapshot) => {
+                const data = snapshot.val();
+                // console.log(data);
+                const section = document.getElementById('bookings');
+                for (const key in data) {
+                    const card = document.createElement('div');
+                    card.innerHTML = `
+                    <div id="card">
+            <div class="updiv">
+                <p>Puja Name: <span id="pname">${data[key].event}</span></p>
+                <p>On Date: <span id="date">${data[key].date}</span></p>
+                <p>Adress: <span id="add">${data[key].add}</span></p>
+            </div>
+            <div class="downdiv">
+                <span id="fee">&#8377; ${data[key].fee}</span>
+                <a href=""><button>Pay Online</button></a>
+                <span id="status">${data[key].status}</span>
+            </div>
+        </div>
+                `;
+                       
+                    section.appendChild(card);
+                    if(data[key].status=="Done"){
+                        document.getElementById('status').style.color="green";
+                        document.getElementById('status').style.border="1px solid green";
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
+
+    </script>
+</body>
+
+</html>
