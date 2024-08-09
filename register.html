@@ -130,7 +130,7 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const dataBase = getDatabase(app);
+        const dataBase = getDatabase();
         const auth = getAuth();
 
         function generateCode() {
@@ -161,14 +161,17 @@
             createUserWithEmailAndPassword(auth, email, password)
                     .then((userCredential) => {
                         const user = userCredential.user;
-                        
-                        set(ref(dataBase, 'users/'+user.uid),{
+                        console.log(user.uid);
+                        set(ref(dataBase, `users/${user.uid}`),{
                             email:email,
                             password:password
+                        }).then(()=>{
+                            alert("Registration successful");
+                            localStorage.setItem('uId', user.uid);
+                            window.location.href="index.html";
+                        }).catch((error)=>{
+                            alert(error);
                         });
-                        alert("Registration successful");
-                        localStorage.setItem('uId', user.uid);
-                        window.location.href="index.html";
                     })
                     .catch((error) => {
                         const errorCode = error.code;

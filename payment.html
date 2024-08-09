@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+        rel="stylesheet">
+    <title>Payment</title>
+    <style>
+        *{
+            padding: 0px;
+            margin: 0px;
+        }
+        form{
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        form>h2{
+            margin: 20px 0px;
+        }
+        form>input{
+            outline: none;
+            border: 1px solid black;
+            border-radius: 3px;
+            padding: 5px 10px;
+            margin: 10px 0px 0px 0px;
+        }
+        form>button{
+            padding: 5px 10px;
+            background-color: rgb(206, 24, 0);
+            color: white;
+            border: 1px solid rgb(206, 24, 0);
+            border-radius: 3px;
+            font-family: "Nunito Sans", sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.5s;
+            letter-spacing: 0.7px;
+        }
+        form>button:hover{
+            background-color: transparent;
+            color: rgb(206, 24, 0);
+        }
+    </style>
+</head>
+<body>
+    <form id="form">
+        <h2>Pay Our Fee</h2>
+        <img src="imgs/QRCode.jpg" width="200px">
+        <input type="number" placeholder="Mobile Number *" required id="phno">
+        <input type="text" placeholder="UPI transection Id *" required id="tId">
+        <button id="submit">Confirm</button>
+    </form>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, set, ref} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAavH4jvdeNB30zHKjNB5svpEewOdPtThY",
+          authDomain: "your-pandit.firebaseapp.com",
+          databaseURL: "https://your-pandit-default-rtdb.firebaseio.com",
+          projectId: "your-pandit",
+          storageBucket: "your-pandit.appspot.com",
+          messagingSenderId: "457299881099",
+          appId: "1:457299881099:web:46aff01b77794d1bb7788e",
+          measurementId: "G-3SH24JEZZB"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+
+        function setToDb(number, tId){
+            set(ref(db,`Transection/${number}`),{
+                TransectionId:tId
+            }).then(()=>{
+                const form = document.getElementById('form');
+                form.style.display="none";
+                alert('Payment Done, Go back <-');
+                window.location.href="yourBooking.html"
+            }).catch((error)=>{
+                console.error(error);
+            });
+        }
+
+        function getData(){
+            let number = document.getElementById('phno').value;
+            let tId = document.getElementById('tId').value;
+            if (number!="" && tId!="") {
+                setToDb(number, tId);
+            }else{
+                alert('Fill all required information.')
+            }
+        }
+
+        document.getElementById('submit').addEventListener('click', (e)=>{
+            e.preventDefault();
+            getData();
+        });
+
+      </script>
+</body>
+</html>
