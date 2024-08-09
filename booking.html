@@ -244,7 +244,8 @@
                     add: Place,
                     status: 'Booked',
                 };
-
+                
+                const bookingRef = ref(db, `users/${uid}/booking`);
                 const bookingId = push(bookingRef).key;
 
                 set(ref(db, `users/${uid}/booking/${bookingId}`), bookingData)
