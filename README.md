@@ -1,6 +1,6 @@
 <h2>Your Pandit</h2>
 <h3>Online Pandit Booking Platform for Odisha</h3>
-<a href="https://haresh79.github.io/your-pandit/">Link to visit: https://haresh79.github.io/your-pandit/</a>
+Link to visit: <a href="https://haresh79.github.io/your-pandit/">https://haresh79.github.io/your-pandit/</a>
 <h4>About the Project</h4>
 
 Your Pandit is a web application designed to simplify the process of booking Pandit Ji for various pujas in Odisha. Users can register or log in to the platform, browse through available Pandit Ji profiles, and book their desired puja services. The platform offers a user-friendly interface, secure payment options, and efficient booking management.
