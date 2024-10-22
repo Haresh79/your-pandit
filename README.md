@@ -38,5 +38,5 @@ Contact
 
 For any inquiries or support, please contact:
 
-Email: [your_email]
-WhatsApp: [your_whatsapp_number]
+Email: <a href="mailto:technoharesh143@gmail.com">technoharesh143@gmail.com</a>
+WhatsApp: <a href="+91 7381876799">+91 7381876799</a>
